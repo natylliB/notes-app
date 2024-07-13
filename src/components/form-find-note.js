@@ -22,8 +22,6 @@ class FormFindNote extends HTMLElement {
   #onSearchBarSubmitHandler() {
     const query = this.#_shadowRoot.querySelector('input#searchNoteTitle').value;
 
-    if(!query) return;
-
     this.dispatchEvent(
       new CustomEvent(this.#searchEvent, {
         detail: { query },

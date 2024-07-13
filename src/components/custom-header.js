@@ -47,6 +47,8 @@ class CustomHeader extends HTMLElement {
       .hr {
         border: 1px solid var(--blue-primary);
         width: 100%;
+        margin-inline: 0;
+        box-sizing: border-box;
       }
     `;
   }
