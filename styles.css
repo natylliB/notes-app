@@ -1,0 +1,27 @@
+:root {
+  --blue-primary: #071952;
+  --blue-secondary: #088395;
+  --teal: #37B7C3;
+  --blueish-grey: #EBF4F6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+.article {
+  &.article--context-main{
+    display: grid;
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+    padding-block: 8px;
+
+    justify-items: center;
+  }
+}
