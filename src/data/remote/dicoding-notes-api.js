@@ -4,18 +4,25 @@ class DicodingNotes {
   static getNonarchiveNotes = async () => {
     try {
       const response = await fetch(`${DicodingNotes.#BASE_URL}/notes`);
+
       if(!response.ok) {
         throw new Error(`Response status: ${response.status} ${response.statusText}`);
       }
+
       const responseJson = await response.json();
+
+      if (!responseJson) {
+        throw new Error('Empty response from server');
+      }
 
       if (responseJson.status === 'success') {
         return responseJson.data;
+      } else {
+        throw new Error(responseJson.message || 'Unknown error');
       }
 
-      throw new Error(responseJson.message);
     } catch(error) {
-      console.error(error.message);
+      console.error('Error when fetching or parsing data:', error);
     }
   }
 
@@ -29,13 +36,19 @@ class DicodingNotes {
 
       const responseJson = await response.json();
 
-      if (responseJson.status === 'success') {
-        return responseJson.data;
+      if (!responseJson) {
+        throw new Error('Empty response from server');
       }
 
-      throw new Error(responseJson.message);
+      if (responseJson.status === 'success') {
+        return responseJson.data;
+      } else {
+        throw new Error(responseJson.message || 'Unknown error');
+      }
+
+
     } catch(error) {
-      console.error(error.message);
+      console.error('Error when fetching or parsing data:', error);
     }
   }
 
@@ -55,9 +68,13 @@ class DicodingNotes {
 
       const responseJson = await response.json();
 
+      if (!responseJson) {
+        throw new Error ('Empty response from the server')
+      }
+
       return responseJson.message;
     } catch (error) {
-      console.error(error);
+      console.error('Error when fetching or parsing data:', error);
     }
   }
 
@@ -73,9 +90,14 @@ class DicodingNotes {
 
       const responseJson = await response.json();
 
+      if (!responseJson) {
+        throw new Error('Empty response from server')
+      }
+
       return responseJson.message;
+
     } catch (error) {
-      console.error(error);
+      console.error('Error when fetching or parsing data:', error);
     }
   }
 
