@@ -1,23 +1,90 @@
 import '../components/index.js';
-import { getAllNotes } from '../notes-data.js';
+import { getAllNotes } from '../data/local/notes-data.js';
+import DicodingNotes from '../data/remote/dicoding-notes-api.js';
+import Utils from '../Utils.js';
+
 
 const addNoteFormElement = document.querySelector('form-add-note');
 const findNoteFormElement = document.querySelector('form-find-note');
-const noteListElement= document.querySelector('note-list');
+const unarchiveNoteListElement = document.querySelector('note-list#unarchive');
+const archivedNoteListElement = document.querySelector('note-list#archived');
+const unarchiveLoadingIndicator = document.querySelector('#unarchiveLoadingIndicator');
+const archivedLoadingIndicator = document.querySelector('#archivedLoadingIndicator');
+const unarchiveNotesSection = document.querySelector('section-with-title#unarchiveNotes');
+const archivedNotesSection = document.querySelector('section-with-title#archivedNotes');
 
 const showAllNotes = () => {
-  const noteItemElements = getAllNotes().map((note) => {
-    const noteItemElement = document.createElement('note-item');
-    noteItemElement.note = note;
+  showUnarchivedNotes();
+  showArchivedNotes();
+}
 
-    noteItemElement.addEventListener('archive', onArchivingNote);
-    noteItemElement.addEventListener('unarchive', onUnarchivingNote)
+const showUnarchivedNotes = async () => {
+  try {
+    Array.from(unarchiveNotesSection).forEach((element) => Utils.hideElement(element));
+    showLoadingIndicator(unarchiveLoadingIndicator);
+    const unarchiveNotes = await DicodingNotes.getNonarchiveNotes();
 
-    return noteItemElement;
-  });
+    const noteItemElements = unarchiveNotes.map((note) => {
+      const noteItemElement = document.createElement('note-item');
+      noteItemElement.note = note;
 
-  noteListElement.innerHTML = '';
-  noteListElement.append(...noteItemElements);
+      noteItemElement.addEventListener('archive', onArchivingNote);
+      noteItemElement.addEventListener('unarchive', onUnarchivingNote);
+      
+      return noteItemElement;
+    });
+
+    Utils.clearElement(unarchiveNoteListElement);
+    unarchiveNoteListElement.append(...noteItemElements);
+
+    hideLoadingIndicator(unarchiveLoadingIndicator);
+    Utils.showElement(unarchiveNoteListElement);
+  } catch (error) {
+    console.error(error);
+    hideLoadingIndicator(unarchiveLoadingIndicator);
+  }
+}
+
+const showArchivedNotes = async() => {
+  try {
+    Array.from(archivedNotesSection).forEach((element) => Utils.hideElement(element));
+    showLoadingIndicator(archivedLoadingIndicator);
+
+    const archivedNotes = await DicodingNotes.getArchivedNotes();
+
+    console.log(archivedNotes);
+
+    const noteItemElements = archivedNotes.map((note) => {
+      const noteItemElement = document.createElement('note-item');
+      noteItemElement.note = note;
+
+      noteItemElement.addEventListener('archive', onArchivingNote);
+      noteItemElement.addEventListener('unarchive', onUnarchivingNote);
+
+      console.log(noteItemElement);
+
+      return noteItemElement;
+    });
+
+    console.log(noteItemElements);
+
+    Utils.clearElement(archivedNoteListElement);
+    archivedNoteListElement.append(...noteItemElements);
+
+    hideLoadingIndicator(archivedLoadingIndicator);
+    Utils.showElement(archivedNoteListElement);
+  } catch (error) {
+    console.error(error);
+    hideLoadingIndicator(archivedLoadingIndicator);
+  }
+}
+
+const showLoadingIndicator = (loadingElement) => {
+  Utils.showElement(loadingElement);
+}
+
+const hideLoadingIndicator = (loadingElement) => {
+  Utils.hideElement(loadingElement);
 }
 
 const onArchivingNote = (event) => {
