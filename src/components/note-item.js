@@ -159,7 +159,7 @@ class NoteItem extends HTMLElement {
   }
 
   #onButtonClickArchived(noteItemInstance) {
-    const query = noteItemInstance.note;
+    const query = noteItemInstance.note.id;
 
     noteItemInstance.dispatchEvent(new CustomEvent(noteItemInstance.#archiveEvent, {
       detail: { query },
@@ -168,7 +168,7 @@ class NoteItem extends HTMLElement {
   }
 
   #onButtonClickUnarchive(noteItemInstance) {
-    const query = noteItemInstance.note;
+    const query = noteItemInstance.note.id;
 
     noteItemInstance.dispatchEvent(new CustomEvent(noteItemInstance.#unarchiveEvent, {
       detail: { query },

@@ -1,11 +1,9 @@
 import '../components/index.js';
-import { getAllNotes } from '../data/local/notes-data.js';
 import DicodingNotes from '../data/remote/dicoding-notes-api.js';
 import Utils from '../Utils.js';
 
 
 const addNoteFormElement = document.querySelector('form-add-note');
-const findNoteFormElement = document.querySelector('form-find-note');
 const unarchiveNoteListElement = document.querySelector('note-list#unarchive');
 const archivedNoteListElement = document.querySelector('note-list#archived');
 const unarchiveLoadingIndicator = document.querySelector('#unarchiveLoadingIndicator');
@@ -52,8 +50,6 @@ const showArchivedNotes = async() => {
 
     const archivedNotes = await DicodingNotes.getArchivedNotes();
 
-    console.log(archivedNotes);
-
     const noteItemElements = archivedNotes.map((note) => {
       const noteItemElement = document.createElement('note-item');
       noteItemElement.note = note;
@@ -61,12 +57,8 @@ const showArchivedNotes = async() => {
       noteItemElement.addEventListener('archive', onArchivingNote);
       noteItemElement.addEventListener('unarchive', onUnarchivingNote);
 
-      console.log(noteItemElement);
-
       return noteItemElement;
     });
-
-    console.log(noteItemElements);
 
     Utils.clearElement(archivedNoteListElement);
     archivedNoteListElement.append(...noteItemElements);
@@ -87,20 +79,30 @@ const hideLoadingIndicator = (loadingElement) => {
   Utils.hideElement(loadingElement);
 }
 
-const onArchivingNote = (event) => {
-  event.preventDefault();
-
-  const { query } = event.detail;
-
-  console.log(`Archiving, Title: ${query.title}`);
+const onArchivingNote = async (event) => {
+  try {
+    event.preventDefault();
+  
+    const { query } = event.detail;
+  
+    await DicodingNotes.archiveNote(query);
+    showAllNotes();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-const onUnarchivingNote = (event) => {
-  event.preventDefault();
-
-  const { query } = event.detail;
-
-  console.log(`Removing from archive, Title: ${query.title}`);
+const onUnarchivingNote = async (event) => {
+  try {
+    event.preventDefault();
+  
+    const { query } = event.detail;
+  
+    await DicodingNotes.unarchiveNote(query);
+    showAllNotes();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 const onAddNoteHandler = (event) => {
@@ -108,19 +110,10 @@ const onAddNoteHandler = (event) => {
 
   const { query } = event.detail;
 
-  console.log('Add Note: ', query);
-}
-
-const onSearchNoteHandler = (event) => {
-  event.preventDefault();
-
-  const { query } = event.detail;
-
-  console.log('Find note: ', query);
+  DicodingNotes.createNote(query);
+  showAllNotes();
 }
 
 addNoteFormElement.addEventListener('addNote', onAddNoteHandler);
-
-findNoteFormElement.addEventListener('search', onSearchNoteHandler);
 
 showAllNotes();

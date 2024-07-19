@@ -3,7 +3,6 @@ class FormAddNote extends HTMLElement {
   #style = null;
   #submitEvent = 'submit';
   #addNoteEvent = 'addNote';
-  #noteCount = 1;
 
   static #instanceCount = 0;
 
@@ -85,17 +84,10 @@ class FormAddNote extends HTMLElement {
   #onFormAddNoteSubmit() {
     const title = this.#_shadowRoot.querySelector('input#noteTitle').value;
     const body = this.#_shadowRoot.querySelector('textarea#noteContent').value;
-    const archived = this.#_shadowRoot.querySelector('input#toArchive').checked;
-
-    const id = `form-add-note-${FormAddNote.#instanceCount}:${this.#noteCount++}`;
-    const createdAt = new Date().toISOString();
 
     const query = {
-      id,
       title,
       body,
-      createdAt,
-      archived,
     }
 
     this.dispatchEvent(
@@ -111,7 +103,6 @@ class FormAddNote extends HTMLElement {
   #clearForm() {
     this.#_shadowRoot.querySelector('input#noteTitle').value = '';
     this.#_shadowRoot.querySelector('textarea#noteContent').value = '';
-    this.#_shadowRoot.querySelector('input#toArchive').checked = false;
   }
 
   #updateStyle() {
@@ -170,13 +161,6 @@ class FormAddNote extends HTMLElement {
         color: red;
         font-style: italic;
       }
-
-      .checkbox {
-        accent-color: var(--teal);
-        width: 1.1em;
-        height: 1.1em;
-        vertical-align: text-top;
-      }
     `;
   }
 
@@ -217,10 +201,6 @@ class FormAddNote extends HTMLElement {
             required
             aria-describedby="noteContentValidation"></textarea>
           <span id="noteContentValidation" class="validation-message" aria-live="polite"></span>
-        </div>
-        <div class="form-group">
-          <label for="toArchive" class="label">Arsipkan</label>
-          <input type="checkbox" name="toArchive" id="toArchive" value="toArchive" class="checkbox"/>
         </div>
         <button class="button">Simpan</button>
       </form>
