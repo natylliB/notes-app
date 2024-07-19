@@ -10,6 +10,9 @@ class Utils {
     element.style.display = 'block';
     element.hidden = false;
   }
+  static hideElementsIn(element) {
+    Array.from(element).forEach((child) => Utils.hideElement(child));
+  }
 }
 
 export default Utils;
