@@ -23,6 +23,22 @@ class NoteList extends HTMLElement {
         gap: 16px
       }
 
+      .emptyPlaceholder {
+        font-size: 1.5em;
+        height: 200px;
+        border-radius: 8px;
+        background-color: var(--blueish-grey);
+        color: var(--blue-primary);
+        font-style: italic;
+
+        grid-column: 1 / -1;
+
+        display: flex;
+        
+        justify-content: center;
+        align-items: center;
+      }
+
       @media screen and (min-width: 600px) {
         .list-container {
           grid-template-columns: repeat(2, 1fr);
@@ -54,7 +70,7 @@ class NoteList extends HTMLElement {
     this.#_shadowRoot.appendChild(this.#style);
     this.#_shadowRoot.innerHTML += `
       <div class="list-container">
-        <slot></slot>
+        <slot><div class="emptyPlaceholder"><p>Anda melihat kekosongan ...</p></div></slot>
       </div>
     `;
   }
