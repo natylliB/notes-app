@@ -5,3 +5,4 @@ import './note-item.js';
 import './custom-header.js';
 import './custom-footer.js';
 import './section-with-title.js';
+import './loading-indicator.js';
