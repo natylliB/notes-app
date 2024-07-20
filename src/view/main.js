@@ -1,6 +1,7 @@
 import '../components/index.js';
 import DicodingNotes from '../data/remote/dicoding-notes-api.js';
 import Utils from '../Utils.js';
+import Swal from 'sweetalert2';
 
 const main = () => {
   document.addEventListener('DOMContentLoaded', () => {
@@ -11,6 +12,23 @@ const main = () => {
     const archivedLoadingIndicator = document.querySelector('#archivedLoadingIndicator');
     const unarchiveNotesSection = document.querySelector('section-with-title#unarchiveNotes');
     const archivedNotesSection = document.querySelector('section-with-title#archivedNotes');
+
+    const PopupError = Swal.mixin({
+      title: "Error",
+      icon: 'error'
+    });
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
 
     const showAllNotes = () => {
       showUnarchivedNotes();
@@ -35,7 +53,7 @@ const main = () => {
 
         Utils.showElement(unarchiveNoteListElement);
       } catch (error) {
-        console.error(error);
+        PopupError.fire({ text: error });
         
         hideLoadingIndicator(unarchiveLoadingIndicator);
       }
@@ -59,7 +77,7 @@ const main = () => {
 
         Utils.showElement(archivedNoteListElement);
       } catch (error) {
-        console.error(error);
+        PopupError.fire({ text: error });
 
         hideLoadingIndicator(archivedLoadingIndicator);
       }
@@ -84,7 +102,7 @@ const main = () => {
         showAllNotes();
 
       } catch (error) {
-        console.error(error);
+        PopupError.fire({ text: error });
       }
     }
 
@@ -99,18 +117,27 @@ const main = () => {
         showAllNotes();
 
       } catch (error) {
-        console.error(error);
+        PopupError.fire({ text: error });
       }
     }
 
     const addNoteHandler = async (event) => {
-      event.preventDefault();
+      try {
+        event.preventDefault();
+  
+        const { query } = event.detail;
+  
+        await DicodingNotes.createNote(query);
 
-      const { query } = event.detail;
+        Toast.fire({
+          icon: 'success',
+          title: 'Berhasil tambah catatan',
+        });
 
-      await DicodingNotes.createNote(query);
-
-      showAllNotes();
+        showAllNotes();
+      } catch (error) {
+        PopupError.fire({ text: error });
+      }
     }
 
     const createNoteItemElements = (notes) => {

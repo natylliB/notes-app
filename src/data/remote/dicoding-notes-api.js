@@ -23,6 +23,8 @@ class DicodingNotes {
 
     } catch(error) {
       console.error('Error when fetching or parsing data:', error);
+
+      throw error;
     }
   }
 
@@ -49,6 +51,8 @@ class DicodingNotes {
 
     } catch(error) {
       console.error('Error when fetching or parsing data:', error);
+
+      throw error;
     }
   }
 
@@ -75,6 +79,8 @@ class DicodingNotes {
       return responseJson.message;
     } catch (error) {
       console.error('Error when fetching or parsing data:', error);
+
+      throw error;
     }
   }
 
@@ -98,6 +104,8 @@ class DicodingNotes {
 
     } catch (error) {
       console.error('Error when fetching or parsing data:', error);
+
+      throw error;
     }
   }
 
@@ -115,7 +123,9 @@ class DicodingNotes {
 
       return responseJson.message;
     } catch (error) {
-      console.error(error);
+      console.error('Error when fetching or parsing data:', error);
+
+      throw error;
     }
   }
 }
