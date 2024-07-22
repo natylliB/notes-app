@@ -1,7 +1,6 @@
 class FormAddNote extends HTMLElement {
   #_shadowRoot = null;
   #style = null;
-  #submitEvent = 'submit';
   #addNoteEvent = 'addNote';
 
   static #instanceCount = 0;
@@ -20,17 +19,16 @@ class FormAddNote extends HTMLElement {
     const noteTitle = form.elements.noteTitle;
     const noteContent = form.elements.noteContent;
 
-    form.addEventListener('submit', (event) => this.#onFormSubmit(event, this));
-    this.addEventListener(this.#submitEvent, this.#onFormAddNoteSubmit);
+    form.addEventListener('submit', this.#onFormSubmitHandler);
+    
+    noteTitle.addEventListener('invalid', this.#onInvalidSetCustomValidityHandler);
+    noteContent.addEventListener('invalid', this.#onInvalidSetCustomValidityHandler);
 
-    noteTitle.addEventListener('invalid', this.#onDataValidityCheckHandler);
-    noteContent.addEventListener('invalid', this.#onDataValidityCheckHandler);
+    noteTitle.addEventListener('blur', this.#onDataValidationMessageHandler);
+    noteContent.addEventListener('blur', this.#onDataValidationMessageHandler);
 
-    noteTitle.addEventListener('blur', (event) => this.#onDataValidationMessageHandler(event, this));
-    noteContent.addEventListener('blur', (event) => this.#onDataValidationMessageHandler(event, this));
-
-    noteTitle.addEventListener('input', (event) => this.#onDataValidationMessageHandler(event, this));
-    noteContent.addEventListener('input', (event) => this.#onDataValidationMessageHandler(event, this));
+    noteTitle.addEventListener('input', this.#onDataValidationMessageHandler);
+    noteContent.addEventListener('input', this.#onDataValidationMessageHandler);
   }
 
   disconnectedCallback() {
@@ -38,20 +36,19 @@ class FormAddNote extends HTMLElement {
     const noteTitle = form.elements.noteTitle;
     const noteContent = form.elements.noteContent;
 
-    form.removeEventListener('submit', (event) => this.#onFormSubmit(event, this));
-    this.removeEventListener(this.#submitEvent, this.#onFormAddNoteSubmit);
+    form.removeEventListener('submit', this.#onFormSubmitHandler);
+    
+    noteTitle.removeEventListener('invalid', this.#onInvalidSetCustomValidityHandler);
+    noteContent.removeEventListener('invalid', this.#onInvalidSetCustomValidityHandler);
 
-    noteTitle.removeEventListener('invalid', this.#onDataValidityCheckHandler);
-    noteContent.removeEventListener('invalid', this.#onDataValidityCheckHandler);
+    noteTitle.removeEventListener('blur', this.#onDataValidationMessageHandler);
+    noteContent.removeEventListener('blur', this.#onDataValidationMessageHandler);
 
-    noteTitle.removeEventListener('blur', (event) => this.#onDataValidationMessageHandler(event, this));
-    noteContent.removeEventListener('blur', (event) => this.#onDataValidationMessageHandler(event, this));
-
-    noteTitle.addEventListener('input', (event) => this.#onDataValidationMessageHandler(event, this));
-    noteContent.addEventListener('input', (event) => this.#onDataValidationMessageHandler(event, this));
+    noteTitle.removeEventListener('input', this.#onDataValidationMessageHandler);
+    noteContent.removeEventListener('input', this.#onDataValidationMessageHandler);
   }
 
-  #onDataValidityCheckHandler(event) {
+  #onInvalidSetCustomValidityHandler = (event) => {
     event.target.setCustomValidity('');
 
     if (event.target.validity.valueMissing) {
@@ -59,13 +56,15 @@ class FormAddNote extends HTMLElement {
     }
   }
 
-  #onDataValidationMessageHandler(event, addNoteFormInstance) {
+  #onDataValidationMessageHandler = (event) => {
+    event.target.checkValidity();
+
     const isValid = event.target.validity.valid;
     const errorMessage = event.target.validationMessage;
 
     const connectedValidationId = event.target.getAttribute('aria-describedby');
     const connectedValidationElement = connectedValidationId 
-      ? addNoteFormInstance.#_shadowRoot.getElementById(connectedValidationId)
+      ? this.#_shadowRoot.getElementById(connectedValidationId)
       : null;
     
     if (connectedValidationElement && errorMessage && !isValid) {
@@ -75,15 +74,15 @@ class FormAddNote extends HTMLElement {
     }
   }
 
-  #onFormSubmit(event, formAddNoteInstance) {
+  #onFormSubmitHandler = (event) => {
     event.preventDefault();
 
-    formAddNoteInstance.dispatchEvent(new CustomEvent('submit'));
-  }
+    if (!(event.target instanceof HTMLFormElement)) {
+      throw new Error ('Form submit handler must be used on an HTMLFormElement.');
+    }
 
-  #onFormAddNoteSubmit() {
-    const title = this.#_shadowRoot.querySelector('input#noteTitle').value;
-    const body = this.#_shadowRoot.querySelector('textarea#noteContent').value;
+    const title = event.target.noteTitle.value;
+    const body = event.target.noteContent.value;
 
     const query = {
       title,
