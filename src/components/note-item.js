@@ -138,13 +138,13 @@ class NoteItem extends HTMLElement {
     
     const button = document.createElement('button');
     button.classList.add('button');
+    button.innerText = this.note.archived ? 'Keluarkan dari arsip' : 'Arsipkan';
+    button.setAttribute('aria-label', this.note.archived ? 'unarchive' : 'archive');
 
     if (this.note.archived) {
       button.addEventListener('click', () => {this.#onButtonClickUnarchive(this)});
-      button.innerText = 'Keluarkan dari arsip';
     } else {
       button.addEventListener('click', () => { this.#onButtonClickArchived(this)});
-      button.innerText = 'Arsipkan';
     }
 
     const buttonCasing = document.createElement('div');
