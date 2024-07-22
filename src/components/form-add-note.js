@@ -33,7 +33,7 @@ class FormAddNote extends HTMLElement {
     noteContent.addEventListener('input', (event) => this.#onDataValidationMessageHandler(event, this));
   }
 
-  disconectedCallback() {
+  disconnectedCallback() {
     const form = this.#_shadowRoot.querySelector('form');
     const noteTitle = form.elements.noteTitle;
     const noteContent = form.elements.noteContent;
