@@ -2,8 +2,8 @@
 
 Submission for [Belajar Fundamental Front-End Web Development](https://www.dicoding.com/academies/163/corridor)
 
-## this submission features:
-1. More in-depth <form></form> usage
+## This submission features:
+1. More in-depth `<form></form>` usage
 2. CSS Grid layouting technique
 3. Web Components and Shadow DOM
 4. Package Manager, usage of NPM modules
